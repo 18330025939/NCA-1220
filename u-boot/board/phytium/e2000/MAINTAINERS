@@ -1,0 +1,10 @@
+E2000 BOARD
+M:	weichangzheng <weichangzheng@phytium.com.cn>
+M:	lixinde <lixinde@phytium.com.cn>
+S:	Maintained
+F:	board/phytium/e2000/*
+F:	include/configs/e2000.h
+F:	configs/e2000_defconfig
+F:	arch/arm/dts/phytium-e2000.dts
+
+

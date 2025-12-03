@@ -1,0 +1,65 @@
+/* SPDX-License-Identifier: GPL-2.0 */
+/* include/phytium-uboot.h
+ *
+ * Copyright (C) 2022 Phytium Corporation
+ *
+ * Phytium SuperSpeed USB uboot init
+ */
+
+#ifndef __PHYTIUM_UBOOT_H_
+#define __PHYTIUM_UBOOT_H_
+
+#include <generic-phy.h>
+#include <linux/usb/otg.h>
+#include <linux/usb/phy.h>
+
+struct ft_device {
+	unsigned long base;
+	enum usb_dr_mode dr_mode;
+	enum usb_phy_interface hsphy_mode;
+	u32 maximum_speed;
+	unsigned tx_fifo_resize:1;
+	unsigned has_lpm_erratum;
+	u8 lpm_nyet_threshold;
+	unsigned is_utmi_l1_suspend;
+	u8 hird_threshold;
+	unsigned disable_scramble_quirk;
+	unsigned u2exit_lfps_quirk;
+	unsigned u2ss_inp3_quirk;
+	unsigned req_p1p2p3_quirk;
+	unsigned del_p1p2p3_quirk;
+	unsigned del_phy_power_chg_quirk;
+	unsigned lfps_filter_quirk;
+	unsigned rx_detect_poll_quirk;
+	unsigned dis_u3_susphy_quirk;
+	unsigned dis_u2_susphy_quirk;
+	unsigned dis_del_phy_power_chg_quirk;
+	unsigned dis_tx_ipgap_linecheck_quirk;
+	unsigned dis_enblslpm_quirk;
+	unsigned dis_u2_freeclk_exists_quirk;
+	unsigned tx_de_emphasis_quirk;
+	unsigned tx_de_emphasis;
+	int index;
+};
+
+int ft_uboot_init(struct ft_device *dev);
+void ft_uboot_exit(int index);
+void ft_uboot_handle_interrupt(int index);
+
+struct phy;
+#if CONFIG_IS_ENABLED(PHY) && CONFIG_IS_ENABLED(DM_USB)
+int ft_setup_phy(struct udevice *dev, struct phy_bulk *phys);
+int ft_shutdown_phy(struct udevice *dev, struct phy_bulk *phys);
+#else
+static inline int ft_setup_phy(struct udevice *dev, struct phy_bulk *phys)
+{
+	return -ENOTSUPP;
+}
+
+static inline int ft_shutdown_phy(struct udevice *dev, struct phy_bulk *phys)
+{
+	return -ENOTSUPP;
+}
+#endif
+
+#endif /* __PHYTIUM_UBOOT_H_ */

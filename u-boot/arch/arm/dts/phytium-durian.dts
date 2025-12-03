@@ -1,0 +1,161 @@
+// SPDX-License-Identifier: GPL-2.0+
+/*
+ * Copyright (C) 2019, Phytium Ltd.
+ * shuyiqi  <shuyiqi@phytium.com.cn>
+ */
+
+/dts-v1/;
+
+/ {
+	model = "Phytium Durian";
+	compatible = "phytium,durian";
+	#address-cells = <2>;
+	#size-cells = <2>;
+
+	pcie-controller@40000000 {
+		compatible = "phytium,pcie-host-1.0";
+		device_type = "pci";
+		#address-cells = <3>;
+		#size-cells = <2>;
+		reg = <0x0 0x40000000 0x0 0x10000000>;
+		bus-range = <0x0 0xff>;
+		ranges = <0x1000000 0x0 0x0 0x0 0x50000000 0x0 0xF00000>,
+		<0x2000000 0x0 0x58000000 0x0 0x58000000 0x0 0x28000000>,
+		<0x43000000 0x10 0x00000000 0x10 0x00000000 0x10  0x00000000>;
+	};
+
+	uart@28001000 {
+		compatible = "arm,pl011";
+		reg = <0x0 0x28001000 0x0 0x1000>;
+		clock = <48000000>;
+	};
+
+	i2c0: i2c@0x28006000 {
+		#address-cells = <1>;
+		#size-cells = <0>;
+		//compatible = "phytium,ft2004-i2c";
+		compatible = "snps,designware-i2c";
+		reg = <0x0 0x28006000 0x0 0x1000>;
+		clock = <48000000>;
+
+		eeprom57: eeprom@57 {
+			compatible = "atmel,24c02";
+			reg = <0x57>;
+		};
+
+	};
+
+	i2c1: i2c@0x28007000 {
+		#address-cells = <1>;
+		#size-cells = <0>;
+		//compatible = "phytium,ft2004-i2c";
+		compatible = "snps,designware-i2c";
+		reg = <0x0 0x28007000 0x0 0x1000>;
+		clock = <48000000>;
+
+		rtc@68 {
+			compatible = "dallas,ds1339";
+			reg = <0x68>;
+		};
+
+	};
+
+	pinctrl: pinctrl@28180000 {
+			compatible = "phytium,ft2004-pinctrl";
+			reg = <0x0 0x28180200 0x0 0x30>;
+			bank0 = <0x0 0x2>;
+			bank1 = <0x0 0x2>;
+			bank2 = <0x0 0x1>;
+			bank3 = <0x0 0x0>;
+			bank4 = <0x0 0x2>;
+			bank5 = <0x0 0x0>;
+			bank6 = <0x0 0x0>;
+			bank7 = <0x0 0x0>;
+			bank8 = <0x0 0xff>;
+	};
+
+	gpio0: gpio@28004000 {
+		#address-cells = <1>;
+		#size-cells = <0>;
+		compatible = "phytium,gpio";
+		reg = <0x0 0x28004000 0x0 0x1000>;
+		status = "okay";
+
+		porta: gpio-controller@0 {
+			gpio-controller;
+			#gpio-cells = <2>;
+			phytium,nr-gpios = <8>;
+			reg = <0>;
+			interrupt-controller;
+			#interrupt-cells = <2>;
+		};
+
+		portb: gpio-controller@1 {
+			gpio-controller;
+			#gpio-cells = <2>;
+			phytium,nr-gpios = <8>;
+			reg = <1>;
+			interrupt-controller;
+			#interrupt-cells = <2>;
+		};
+	};
+
+	gpio1: gpio@28005000 {
+		#address-cells = <1>;
+		#size-cells = <0>;
+		compatible = "phytium,gpio";
+		reg = <0x0 0x28005000 0x0 0x1000>;
+		status = "okay";
+
+		portc: gpio-controller@0 {
+			gpio-controller;
+			#gpio-cells = <2>;
+			phytium,nr-gpios = <8>;
+			reg = <0>;
+			interrupt-controller;
+			#interrupt-cells = <2>;
+		};
+
+		portd: gpio-controller@1 {
+			gpio-controller;
+			#gpio-cells = <2>;
+			phytium,nr-gpios = <8>;
+			reg = <1>;
+			interrupt-controller;
+			#interrupt-cells = <2>;
+		};
+	};
+
+	aliases {
+		spi0 = &spi0;
+	};
+
+	spi0: spi@2800c000 {
+		compatible = "phytium,phytium-spi";
+		reg = <0x0 0x2800c000 0x0 0x1000>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+		spi-max-frequency = <4000000>;
+		clock = <48000000>;
+		//cs-gpio = <&portc 5 1>;
+
+		spi_flash@0 {
+			compatible = "jedec,spi-nor";
+			reg = <0>;
+			spi-max-frequency = <4000000>;
+		};
+	};
+
+	watchdog0: watchdog@2800a000 {
+			compatible = "arm,sbsa-gwdt";
+			reg = <0x0 0x2800a000 0x0 0x1000>;
+			clock = <48000000>;
+		};
+
+	watchdog1: watchdog@28016000 {
+			compatible = "arm,sbsa-gwdt";
+			reg = <0x0 0x28016000 0x0 0x1000>;
+			clock = <48000000>;
+		};
+};
+
